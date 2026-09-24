@@ -1,0 +1,74 @@
+<Prefab>
+  <Window>
+    <BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Brush="CSR.Scrim">
+      <Children>
+
+        <!--The hairline edge is the outer widget and the panel sits 2 units inside it. The panel's height
+            comes from its content, and a content-sized height cannot hold any child that stretches to
+            it (a side hairline, a hint, an overlay): that child takes the parent's own available height
+            and the dialog grows to the screen.-->
+        <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="CoverChildren" SuggestedWidth="724" HorizontalAlignment="Center" VerticalAlignment="Center" Brush="CSR.Hairline">
+          <Children>
+            <BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginLeft="2" MarginRight="2" MarginTop="2" MarginBottom="2" Brush="CSR.Panel">
+              <Children>
+
+                <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" StackLayout.LayoutMethod="VerticalTopToBottom">
+                  <Children>
+
+                    <!--Title-->
+                    <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="52" MarginTop="16" MarginLeft="32" MarginRight="32" Text="@Title" Brush="CSR.Text.Title"/>
+
+                    <!--Body-->
+                    <RichTextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginLeft="32" MarginRight="32" MarginTop="8" Text="@Body" Brush="CSR.Text.Body" IsVisible="@HasBody"/>
+
+                    <!--Text field-->
+                    <BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="52" MarginLeft="32" MarginRight="32" MarginTop="20" Brush="CSR.Field" IsVisible="@HasInput">
+                      <Children>
+                        <BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="2" VerticalAlignment="Top" Brush="CSR.Hairline" IsEnabled="false"/>
+                        <BrushWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="Fixed" SuggestedHeight="2" VerticalAlignment="Bottom" Brush="CSR.Hairline" IsEnabled="false"/>
+                        <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="2" HorizontalAlignment="Left" Brush="CSR.Hairline" IsEnabled="false"/>
+                        <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="StretchToParent" SuggestedWidth="2" HorizontalAlignment="Right" Brush="CSR.Hairline" IsEnabled="false"/>
+                        <EditableTextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" MarginLeft="14" MarginRight="14" MarginTop="10" MarginBottom="10" Brush="CSR.Field.Text" RealText="@InputText"/>
+                      </Children>
+                    </BrushWidget>
+
+                    <!--Actions, right-aligned with the primary last-->
+                    <ListPanel WidthSizePolicy="CoverChildren" HeightSizePolicy="Fixed" SuggestedHeight="46" HorizontalAlignment="Right" MarginRight="32" MarginTop="28" MarginBottom="24" StackLayout.LayoutMethod="HorizontalLeftToRight">
+                      <Children>
+                        <Widget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="236" SuggestedHeight="46" IsVisible="@HasNegative">
+                          <Children>
+                            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteNegative" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="220" SuggestedHeight="46" HorizontalAlignment="Left" VerticalAlignment="Center" Brush="CSR.Button.Secondary">
+                              <Children>
+                                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="@NegativeText" Brush="CSR.Text.Button"/>
+                                <HintWidget DataSource="{NegativeHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+                              </Children>
+                            </ButtonWidget>
+                          </Children>
+                        </Widget>
+                        <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteAffirmative" IsVisible="@IsDestructive" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="220" SuggestedHeight="46" VerticalAlignment="Center" Brush="CSR.Button.Danger">
+                          <Children>
+                            <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="@AffirmativeText" Brush="CSR.Text.ButtonDanger"/>
+                            <HintWidget DataSource="{AffirmativeHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+                          </Children>
+                        </ButtonWidget>
+                        <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteAffirmative" IsVisible="@IsHarmless" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="220" SuggestedHeight="46" VerticalAlignment="Center" Brush="CSR.Button.Primary">
+                          <Children>
+                            <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="@AffirmativeText" Brush="CSR.Text.ButtonPrimary"/>
+                            <HintWidget DataSource="{AffirmativeHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+                          </Children>
+                        </ButtonWidget>
+                      </Children>
+                    </ListPanel>
+
+                  </Children>
+                </ListPanel>
+
+              </Children>
+            </BrushWidget>
+          </Children>
+        </BrushWidget>
+
+      </Children>
+    </BrushWidget>
+  </Window>
+</Prefab>

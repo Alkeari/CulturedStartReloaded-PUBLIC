@@ -1,0 +1,316 @@
+﻿<Project Sdk="Bannerlord.BUTRModule.Sdk/1.1.0.129">
+
+  <PropertyGroup>
+    <Version>4.0.2</Version>
+    <TargetFrameworks>net472;net6</TargetFrameworks>
+    <Platforms>x64</Platforms>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <LangVersion>10.0</LangVersion>
+    <Configurations>Debug;Release;Stable_Debug;Stable_Release;Beta_Debug;Beta_Release;RoT_Debug;RoT_Release;TAOM_Debug;TAOM_Release</Configurations>
+    <Nullable>enable</Nullable>
+    <!-- CS0168 comes only from the BUTR SDK's generated ModuleLoader source; the mod's own code compiles clean without this. -->
+    <NoWarn>CS0168</NoWarn>
+
+    <BuildForWindows>false</BuildForWindows>
+    <BuildForWindowsStore>false</BuildForWindowsStore>
+    
+    <!-- The filename has a space, so the derived root namespace would too. -->
+    <RootNamespace>CulturedStartReloaded</RootNamespace>
+    <ModuleId>CulturedStartReloaded</ModuleId>
+    <ModuleName>Cultured Start Reloaded</ModuleName>
+    <ModuleUrl>https://www.nexusmods.com/mountandblade2bannerlord/mods/10050</ModuleUrl>
+    <GameFolder>$(BANNERLORD_GAME_DIR)</GameFolder>
+  </PropertyGroup>
+
+  <!--
+    The Realm of Thrones variant. Same source and same assembly shape as the main download; what
+    differs is the manifest. It carries its own module id so both can sit in one Modules folder and
+    so the launcher can be told to load it after the conversion, and it declares the conversion's
+    four modules as dependencies so it cannot be enabled without them. The id carries no separator,
+    which keeps it identical to its flattened form: the generated loader names its FILE from the id
+    and its TYPE from the flattened id, and a hyphen makes those two differ.
+
+    The configuration name contains neither "Stable" nor "Beta", so the SDK treats it as Minimal and
+    compiles against the last line of supported-game-versions.txt, exactly as Release does.
+  -->
+  <PropertyGroup Condition="$(Configuration.StartsWith('RoT'))">
+    <ModuleId>CulturedStartReloadedROT</ModuleId>
+    <ModuleName>Cultured Start Reloaded - RoT</ModuleName>
+  </PropertyGroup>
+
+  <!--
+    The Tales from the Age of Men download. Like the RoT build it is the main source and assembly
+    shape under its own manifest, compiled as Minimal: TAOM v2 runs on game v1.4.8, inside the main
+    range.
+  -->
+  <PropertyGroup Condition="$(Configuration.StartsWith('TAOM'))">
+    <ModuleId>CulturedStartReloadedTAOM</ModuleId>
+    <ModuleName>Cultured Start Reloaded - TAOM</ModuleName>
+  </PropertyGroup>
+
+  <!--
+    TAOM.Dependencies bundles Harmony, ButterLib, UIExtenderEx and MCM as its own submodules and tells
+    players to enable no separate Bannerlord.ButterLib or Bannerlord.MBOptionScreen module, so the
+    manifest requires TAOM.Dependencies in place of the three BUTR module ids, which a TAOM install
+    does not carry and whose absence would make the launcher refuse this module. The conversion's
+    modules declare only TAOM's own version (v2.0.28), so no floor is stated: the entries order the
+    load and require the modules to be present.
+  -->
+  <Target Name="DeclareTaomDependencies" AfterTargets="CopyModule"
+          Condition="$(Configuration.StartsWith('TAOM')) AND '$(GameFolder)' != '' AND Exists('$(GameFolder)\Modules\$(ModuleId)\SubModule.xml') AND !$([System.IO.File]::ReadAllText('$(GameFolder)\Modules\$(ModuleId)\SubModule.xml').Contains('TAOM.Dependencies'))">
+    <ItemGroup>
+      <_TaomModule Include="TAOM.Dependencies;LOTRLOME_Armory;TAOM;TAOM_Map" />
+      <_BundledButrModule Include="Harmony;ButterLib;MBOptionScreen" />
+    </ItemGroup>
+    <!-- The task refuses an empty replacement, so each entry is matched up to the next tag's opening bracket and replaced by that bracket. -->
+    <ReplaceFileText File="$(GameFolder)\Modules\$(ModuleId)\SubModule.xml"
+                     Regex="&lt;DependedModule(Metadata)? [Ii]d=&quot;Bannerlord\.%(_BundledButrModule.Identity)&quot;[^&gt;]*/&gt;\s*&lt;"
+                     ReplacementText="&lt;" />
+    <ReplaceFileText File="$(GameFolder)\Modules\$(ModuleId)\SubModule.xml"
+                     Regex="&lt;/DependedModules&gt;"
+                     ReplacementText="@(_TaomModule->'&lt;DependedModule Id=&quot;%(Identity)&quot; /&gt;', '')&lt;/DependedModules&gt;" />
+    <ReplaceFileText File="$(GameFolder)\Modules\$(ModuleId)\SubModule.xml"
+                     Regex="&lt;/DependedModuleMetadatas&gt;"
+                     ReplacementText="@(_TaomModule->'&lt;DependedModuleMetadata id=&quot;%(Identity)&quot; order=&quot;LoadBeforeThis&quot; /&gt;', '')&lt;/DependedModuleMetadatas&gt;" />
+  </Target>
+
+  <!--
+    The conversion's own modules, declared only by the RoT build. DependedModule orders the load;
+    DependedModuleMetadata is the one declared version the module manager enforces, and it enforces
+    it as a FLOOR, so it names the 8.x line rather than the exact build tested. A floor set to the
+    tested build is how v3.25.0 locked players out, and the same mistake here would refuse every
+    Realm of Thrones install but one.
+
+    Injected into the deployed manifest rather than written into _Module/SubModule.xml, which is
+    shared with the downloads that must NOT require the conversion. Guarded on the text being
+    absent, because the copy runs once per target framework into the same file.
+  -->
+  <Target Name="DeclareConversionDependencies" AfterTargets="CopyModule"
+          Condition="$(Configuration.StartsWith('RoT')) AND '$(GameFolder)' != '' AND Exists('$(GameFolder)\Modules\$(ModuleId)\SubModule.xml') AND !$([System.IO.File]::ReadAllText('$(GameFolder)\Modules\$(ModuleId)\SubModule.xml').Contains('ROT-Core'))">
+    <PropertyGroup>
+      <!--
+        Realm of Thrones changed how it versions itself between generations: 7.1's modules declare the
+        GAME version (ROT-Core v1.3.15.3) and 8.x declare the MOD version (v8.1.8). The
+        declared version is an enforced FLOOR, and one manifest covers every implementation in the
+        download, so no floor admits both generations while still meaning anything. The entries are
+        therefore marked optional, which the module manager exempts from the floor entirely. The attribute is
+        parsed case-sensitively: optional="True" silently reinstates the floor.
+        The cost, taken deliberately: this build no longer refuses to enable without Realm of Thrones.
+      -->
+      <_ConversionFloor>v1.0.0</_ConversionFloor>
+      <_ConversionOptional>true</_ConversionOptional>
+      <_ConversionModules>ROT-Core;ROT-Content;ROT_Map;ROT-Dragon</_ConversionModules>
+    </PropertyGroup>
+    <ItemGroup>
+      <_ConversionModule Include="$(_ConversionModules)" />
+    </ItemGroup>
+    <ReplaceFileText File="$(GameFolder)\Modules\$(ModuleId)\SubModule.xml"
+                     Regex="&lt;/DependedModules&gt;"
+                     ReplacementText="@(_ConversionModule->'&lt;DependedModule Id=&quot;%(Identity)&quot; DependentVersion=&quot;$(_ConversionFloor)&quot; /&gt;', '')&lt;/DependedModules&gt;" />
+    <ReplaceFileText File="$(GameFolder)\Modules\$(ModuleId)\SubModule.xml"
+                     Regex="&lt;/DependedModuleMetadatas&gt;"
+                     ReplacementText="@(_ConversionModule->'&lt;DependedModuleMetadata id=&quot;%(Identity)&quot; order=&quot;LoadBeforeThis&quot; optional=&quot;$(_ConversionOptional)&quot; version=&quot;$(_ConversionFloor)&quot; /&gt;', '')&lt;/DependedModuleMetadatas&gt;" />
+  </Target>
+
+  <!--
+    The downloads are the same mod for different worlds and must never run together: same MCM
+    settings id, same Harmony patches applied twice. Different module ids mean the launcher will
+    happily let a player enable both, so each build names the others as incompatible and the game
+    disables it rather than letting the pair load. Injected per configuration because the manifest
+    is shared; the schema puts IncompatibleModules after DependedModules and BEFORE the community
+    metadata block, so it goes in at that exact seam.
+  -->
+  <Target Name="DeclareSiblingIncompatible" AfterTargets="CopyModule"
+          Condition="'$(GameFolder)' != '' AND Exists('$(GameFolder)\Modules\$(ModuleId)\SubModule.xml') AND !$([System.IO.File]::ReadAllText('$(GameFolder)\Modules\$(ModuleId)\SubModule.xml').Contains('IncompatibleModules'))">
+    <PropertyGroup>
+      <_SiblingModuleIds Condition="$(Configuration.StartsWith('RoT'))">CulturedStartReloaded;CulturedStartReloadedTAOM</_SiblingModuleIds>
+      <_SiblingModuleIds Condition="$(Configuration.StartsWith('TAOM'))">CulturedStartReloaded;CulturedStartReloadedROT</_SiblingModuleIds>
+      <_SiblingModuleIds Condition="!$(Configuration.StartsWith('RoT')) AND !$(Configuration.StartsWith('TAOM'))">CulturedStartReloadedROT;CulturedStartReloadedTAOM</_SiblingModuleIds>
+    </PropertyGroup>
+    <ItemGroup>
+      <_SiblingModule Include="$(_SiblingModuleIds)" />
+    </ItemGroup>
+    <ReplaceFileText File="$(GameFolder)\Modules\$(ModuleId)\SubModule.xml"
+                     Regex="&lt;/DependedModules&gt;"
+                     ReplacementText="&lt;/DependedModules&gt;%0A  &lt;IncompatibleModules&gt;%0A    @(_SiblingModule->'&lt;Module Id=&quot;%(Identity)&quot; /&gt;', '%0A    ')%0A  &lt;/IncompatibleModules&gt;" />
+  </Target>
+
+  <!--
+    Realm of Thrones overrides the same native prefab this mod does, and the later module wins, so
+    one of the two panels is always lost. Ours exists only to print the starting skill level on each
+    skill icon; theirs is the screen they styled. The conversion's build yields it and keeps the rest
+    of the mod, which is the whole reason this download is a build rather than a relabelled zip.
+  -->
+  <Target Name="YieldPrefabToConversion" AfterTargets="CopyModule"
+          Condition="$(Configuration.StartsWith('RoT')) AND '$(GameFolder)' != ''">
+    <Delete Files="$(GameFolder)\Modules\$(ModuleId)\GUI\Prefabs\CharacterCreationGainedProperties.xml" />
+  </Target>
+
+  <PropertyGroup Condition="$(TargetFramework) == 'net472'">
+    <!-- Steam/GOG/Epic versions of the game -->
+    <BuildForWindows>true</BuildForWindows>
+  </PropertyGroup>
+  <PropertyGroup Condition="$(TargetFramework) == 'net6'">
+    <!-- Xbox Game Pass PC version of the game -->
+    <BuildForWindowsStore>true</BuildForWindowsStore>
+    <EnableWindowsTargeting>true</EnableWindowsTargeting>
+  </PropertyGroup>
+
+  <!-- Development Variables -->
+  <PropertyGroup>
+    <HarmonyVersion>2.4.2</HarmonyVersion>
+    <ButterLibVersion>2.11.1</ButterLibVersion>
+    <MCMVersion>5.12.2</MCMVersion>
+    <BUTRModuleLoaderVersion>1.0.1.50</BUTRModuleLoaderVersion>
+    <HarmonyExtensionsVersion>3.2.0.77</HarmonyExtensionsVersion>
+  </PropertyGroup>
+
+  <!--
+    The test project lives under tests\ and is built on its own. Without this the module csproj's
+    default glob sweeps in the test project's generated obj\ assembly info and the module build
+    fails on duplicate assembly attributes, with nothing in the error naming the tests.
+  -->
+  <ItemGroup>
+    <Compile Remove="tests\**\*.cs" />
+    <None Remove="tests\**" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="BUTR.Harmony.Analyzer" Version="1.0.1.50" PrivateAssets="all" IncludeAssets="runtime; build; native; contentfiles; analyzers; buildtransitive" />
+  </ItemGroup>
+
+  <!-- The game ships Newtonsoft.Json in its bin and loads it; never redistribute it.
+       Compile-only PackageReference, the same pattern Inventory Enhancer uses for the same
+       constraint: compiles against the API with no game install present and ships nothing. -->
+  <ItemGroup>
+    <PackageReference Include="Newtonsoft.Json" Version="13.0.1" PrivateAssets="all" IncludeAssets="compile" />
+  </ItemGroup>
+
+  <!-- A silent no-deploy build hides broken environments; fail loudly instead. -->
+  <Target Name="RequireGameDir" AfterTargets="Build" Condition="'$(BANNERLORD_GAME_DIR)' == ''">
+    <Warning Text="BANNERLORD_GAME_DIR is not set: the module built but was NOT deployed to any game folder." />
+  </Target>
+
+  <!--
+    The SDK reads the last line of supported-game-versions.txt as the Minimal version, and falls back
+    to the second-to-last entry when that line is empty. A trailing newline therefore moves the floor
+    up one entry in silence, and the floor is not cosmetic: it becomes the DependedModuleMetadata
+    version, the one dependency field the module manager enforces, so every player on a game older
+    than it is told the mod has a dependency conflict and cannot play.
+
+    That shipped. v3.25.0 went out with a trailing newline, declaring game v1.4.7 instead of v1.3.15,
+    and players below v1.4.7 lost the mod overnight. It was fixed by hand the same day; this makes it
+    impossible to ship again.
+  -->
+  <Target Name="VerifyGameVersionFloor" BeforeTargets="CoreCompile"
+          Condition="Exists('$(MSBuildProjectDirectory)\supported-game-versions.txt')">
+    <PropertyGroup>
+      <_SupportedVersionsText>$([System.IO.File]::ReadAllText('$(MSBuildProjectDirectory)\supported-game-versions.txt'))</_SupportedVersionsText>
+    </PropertyGroup>
+    <Error Condition="$(_SupportedVersionsText.EndsWith('%0A')) Or $(_SupportedVersionsText.EndsWith('%0D'))"
+           Text="supported-game-versions.txt ends with a newline. The SDK reads the last line as the Minimal version and falls back to the second-to-last entry when it is empty, so this silently raises the declared game floor by one entry and locks out every player on an older game. Remove the trailing newline." />
+    <!-- The SDK skips parsing the file when OverrideGameVersion is set, as the compatibility
+         scanner does, so an empty GameMinimalVersion is only wrong when nothing overrode it. -->
+    <Error Condition="'$(GameMinimalVersion)' == '' And '$(OverrideGameVersion)' == ''"
+           Text="GameMinimalVersion resolved to nothing from supported-game-versions.txt; the manifest would declare no game version at all." />
+  </Target>
+
+  <!--
+    The SDK deploys into a folder named for the module id, and only the outer build renames it to the
+    module name. A single-framework build (-p:TargetFramework=net472, say) therefore deployed and was
+    never renamed, leaving a second folder declaring the same module id next to the real one, holding
+    one framework's output. The game then warns about a duplicate module id and ignores one of them.
+
+    Both halves are closed here. The outer build clears the staging folder before any inner build
+    writes to it, so a leftover can never merge into the next deploy, and drops a marker inside it.
+    An inner build that finds no marker knows it was started on its own rather than by an outer
+    build, removes what it just staged and says why, so the installed module is left alone.
+  -->
+  <PropertyGroup>
+    <_DeployStagingMarker>.outer-build</_DeployStagingMarker>
+  </PropertyGroup>
+
+  <Target Name="PrepareModuleStaging"
+          BeforeTargets="DispatchToInnerBuilds"
+          Condition="'$(GameFolder)' != '' And '$(ModuleId)' != '$(ModuleName)' And Exists('$(GameFolder)')">
+    <RemoveDir Directories="$(GameFolder)\Modules\$(ModuleId)" ContinueOnError="true" />
+    <MakeDir Directories="$(GameFolder)\Modules\$(ModuleId)" />
+    <WriteLinesToFile File="$(GameFolder)\Modules\$(ModuleId)\$(_DeployStagingMarker)"
+                      Lines="Written by the outer build; removed before the module is installed."
+                      Overwrite="true" />
+  </Target>
+
+  <Target Name="NoStrayStagingFolder"
+          AfterTargets="CopyModule"
+          Condition="'$(TargetFramework)' != '' And '$(GameFolder)' != '' And '$(ModuleId)' != '$(ModuleName)' And !Exists('$(GameFolder)\Modules\$(ModuleId)\$(_DeployStagingMarker)')">
+    <RemoveDir Directories="$(GameFolder)\Modules\$(ModuleId)" ContinueOnError="true" />
+    <Warning Text="A single-framework build cannot be deployed: it holds only $(TargetFramework), and the module folder is renamed only by the outer build, so it would leave a second folder declaring module id '$(ModuleId)'. What it staged has been removed and the installed module is untouched. Build without -p:TargetFramework, or pass -p:DisableModuleCopy=true." />
+  </Target>
+
+  <!--
+    The deployed folder is named for the module, not its id, so the SDK's output folder is renamed
+    after the build. It is a replacement, never a merge: an xcopy or Copy over the existing folder
+    leaves behind every file the new build no longer produces, and the versioned assembly name
+    carries the game version, so bumping supported-game-versions.txt left the previous version's DLL
+    sitting in the deployed module beside the new one for the game to load.
+
+    Runs on the outer build, once, after every inner build has deployed into the id folder; renaming
+    from an inner build would delete the other framework's output that the earlier pass just placed.
+    Skipped when the id and the name are the same, where there is nothing to rename and parking the
+    folder would move the new build away from under itself.
+
+    The replacement parks the deployed module before installing the new one, and puts it back if the
+    install fails, so a failed deploy leaves the previous module rather than none. Deleting first was
+    destructive: a running game holds the assemblies, the delete stripped every file it could reach,
+    the move then failed, and the game was left with a module folder holding no manifest and no
+    prefabs (twice on 2026-09-06, once ending in a crash reading a prefab that had been deleted from
+    under the running game). Renaming a locked folder fails while that folder is still whole.
+  -->
+  <Target Name="RenameModuleFolder"
+          AfterTargets="Build"
+          Condition="('$(TargetFramework)' == '' Or '$(TargetFrameworks)' == '') And '$(GameFolder)' != '' And '$(ModuleId)' != '$(ModuleName)' And Exists('$(GameFolder)\Modules\$(ModuleId)')">
+
+    <PropertyGroup>
+      <_DeployStaging>$(GameFolder)\Modules\$(ModuleId)</_DeployStaging>
+      <_DeployLive>$(GameFolder)\Modules\$(ModuleName)</_DeployLive>
+      <_DeployParked>$(GameFolder)\Modules\$(ModuleName).previous</_DeployParked>
+    </PropertyGroup>
+
+    <Delete Files="$(_DeployStaging)\$(_DeployStagingMarker)" ContinueOnError="true" />
+
+    <!-- A run that died between the two moves left the module parked and nothing live; put it back
+         before anything else, and never delete the parked copy while it is the only one. -->
+    <Exec Condition="Exists('$(_DeployParked)') And !Exists('$(_DeployLive)')"
+          Command="move &quot;$(_DeployParked)&quot; &quot;$(_DeployLive)&quot;"
+          ContinueOnError="true" />
+    <Error Condition="Exists('$(_DeployParked)') And !Exists('$(_DeployLive)')"
+           Text="'$(_DeployParked)' holds the only copy of the deployed module and could not be restored to '$(_DeployLive)'. Close Bannerlord and rename it back by hand before building again." />
+    <RemoveDir Condition="Exists('$(_DeployParked)')" Directories="$(_DeployParked)" ContinueOnError="true" />
+
+    <!-- Park the live module. A lock fails here, while it is still intact. -->
+    <Exec Condition="Exists('$(_DeployLive)')"
+          Command="move &quot;$(_DeployLive)&quot; &quot;$(_DeployParked)&quot;"
+          ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="_DeployParkExit" />
+    </Exec>
+    <Error Condition="'$(_DeployParkExit)' != '' And '$(_DeployParkExit)' != '0'"
+           Text="Could not replace the deployed module: '$(_DeployLive)' is in use. Close Bannerlord and build again. The deployed module is untouched; this build is at '$(_DeployStaging)'." />
+
+    <!-- Install the new build in its place. -->
+    <Exec Command="move &quot;$(_DeployStaging)&quot; &quot;$(_DeployLive)&quot;" ContinueOnError="true">
+      <Output TaskParameter="ExitCode" PropertyName="_DeployInstallExit" />
+    </Exec>
+
+    <!-- Failed install: the previous module goes back, so the game is never left without one. -->
+    <Exec Condition="'$(_DeployInstallExit)' != '0' And Exists('$(_DeployParked)') And !Exists('$(_DeployLive)')"
+          Command="move &quot;$(_DeployParked)&quot; &quot;$(_DeployLive)&quot;"
+          ContinueOnError="true" />
+    <Error Condition="'$(_DeployInstallExit)' != '0'"
+           Text="Could not move this build into '$(_DeployLive)'. The previously deployed module was put back; this build is at '$(_DeployStaging)'." />
+
+    <!-- Only once the new module is really in place. -->
+    <RemoveDir Condition="Exists('$(_DeployParked)') And Exists('$(_DeployLive)')"
+               Directories="$(_DeployParked)" ContinueOnError="true" />
+  </Target>
+
+</Project>
