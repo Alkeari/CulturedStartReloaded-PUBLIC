@@ -1,0 +1,98 @@
+﻿<Prefab>
+  <Window>
+    <!-- The root must not accept events, or it would swallow every click meant
+         for the vanilla menu layers underneath -->
+    <Widget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" DoNotAcceptEvents="true">
+      <Children>
+
+        <!-- The effect column: the choice title and the third text every option
+             carries, saying exactly what taking it does. Text only, no surface of
+             its own, in the empty column the vanilla stage leaves between the
+             character and the menu panel.
+
+             The bounds are the vanilla layout's own, not a guess. Right edge:
+             MarginRight="650", the reserve every stage widget keeps clear of the
+             menu panel (CharacterCreationNarrativeStage.xml). Left edge: the
+             vanilla selected-option description is a 650-wide block centered in
+             the region left of that reserve with MarginLeft="100", so its right
+             edge lands at half the screen plus 50 whatever the width, which is
+             260 units clear of the reserve at 16:9. Top: MarginTop="100" clears
+             the vanilla gained-traits row, which is 75 tall and anchored to the
+             top right at MarginRight="670".
+
+             Nothing here accepts events: a click in this column is a camera drag
+             on the stage behind it, and swallowing one would kill the drag. -->
+        <Widget WidthSizePolicy="Fixed" SuggestedWidth="260" HeightSizePolicy="StretchToParent" HorizontalAlignment="Right" MarginRight="650" MarginTop="100" MarginBottom="70" IsVisible="@HasEffect" DoNotAcceptEvents="true">
+          <Children>
+            <ListPanel WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" VerticalAlignment="Top" StackLayout.LayoutMethod="VerticalTopToBottom" DoNotAcceptEvents="true">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" MarginBottom="12" Text="@EffectTitle" Brush="CSR.Text.Heading" Brush.TextHorizontalAlignment="Center" DoNotAcceptEvents="true"/>
+                <RichTextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="CoverChildren" Text="@EffectText" Brush="CSR.Text.Body" Brush.TextHorizontalAlignment="Right" DoNotAcceptEvents="true"/>
+              </Children>
+            </ListPanel>
+          </Children>
+        </Widget>
+
+        <!-- Bottom-center strip: pan, rotate and zoom for the live character,
+             read left to right as one rig: out, orbit, zoom, orbit, out, home.
+             Children are placed by explicit offsets; stack margins are not
+             reliable spacing in this layout and caused overlap.
+
+             The strip is bounded by the same vanilla reserve the effect column
+             above it is bounded by. At 1920 units the menu panel owns everything
+             past 1270, and this strip, centered at 480 wide, runs 720 to 1200.
+             Seven buttons fit inside that only at a 66-unit pitch, which is why
+             the spacing is tighter than it was for five. It sits on the mod's own
+             layer and is fixed-size, so nothing under it is resized by any of
+             this. -->
+        <BrushWidget WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="480" SuggestedHeight="50" HorizontalAlignment="Center" VerticalAlignment="Bottom" MarginBottom="10" Brush="CSR.Panel">
+          <Children>
+            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecutePanLeft" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="52" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="16" Brush="CSR.Button.Secondary">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="&lt;&lt;" Brush="CSR.Text.Button"/>
+                <HintWidget DataSource="{PanLeftHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+              </Children>
+            </ButtonWidget>
+            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteRotateLeft" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="52" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="82" Brush="CSR.Button.Secondary">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="&lt;" Brush="CSR.Text.Button"/>
+                <HintWidget DataSource="{RotateLeftHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+              </Children>
+            </ButtonWidget>
+            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteZoomOut" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="52" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="148" Brush="CSR.Button.Secondary">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="-" Brush="CSR.Text.Button"/>
+                <HintWidget DataSource="{ZoomOutHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+              </Children>
+            </ButtonWidget>
+            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteZoomIn" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="52" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="214" Brush="CSR.Button.Secondary">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="+" Brush="CSR.Text.Button"/>
+                <HintWidget DataSource="{ZoomInHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+              </Children>
+            </ButtonWidget>
+            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteRotateRight" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="52" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="280" Brush="CSR.Button.Secondary">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="&gt;" Brush="CSR.Text.Button"/>
+                <HintWidget DataSource="{RotateRightHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+              </Children>
+            </ButtonWidget>
+            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecutePanRight" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="52" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="346" Brush="CSR.Button.Secondary">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="&gt;&gt;" Brush="CSR.Text.Button"/>
+                <HintWidget DataSource="{PanRightHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+              </Children>
+            </ButtonWidget>
+            <ButtonWidget DoNotPassEventsToChildren="true" Command.Click="ExecuteResetView" WidthSizePolicy="Fixed" HeightSizePolicy="Fixed" SuggestedWidth="52" SuggestedHeight="40" HorizontalAlignment="Left" VerticalAlignment="Center" PositionXOffset="412" Brush="CSR.Button.Secondary">
+              <Children>
+                <TextWidget WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Text="R" Brush="CSR.Text.Button"/>
+                <HintWidget DataSource="{ResetViewHint}" DoNotAcceptEvents="true" WidthSizePolicy="StretchToParent" HeightSizePolicy="StretchToParent" Command.HoverBegin="ExecuteBeginHint" Command.HoverEnd="ExecuteEndHint"/>
+              </Children>
+            </ButtonWidget>
+          </Children>
+        </BrushWidget>
+
+      </Children>
+    </Widget>
+  </Window>
+</Prefab>

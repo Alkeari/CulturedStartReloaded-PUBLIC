@@ -1,0 +1,57 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <LangVersion>10.0</LangVersion>
+    <Nullable>enable</Nullable>
+    <IsPackable>false</IsPackable>
+    <RootNamespace>CulturedStartReloaded.Tests</RootNamespace>
+    <AssemblyName>CulturedStartReloaded.Tests</AssemblyName>
+    <EnableDefaultCompileItems>false</EnableDefaultCompileItems>
+  </PropertyGroup>
+
+  <!--
+    No ProjectReference to the mod. The BUTR SDK deploys into the game folder on build, so
+    referencing it would install a module every time the tests ran. The pure-logic files are
+    compiled in by path instead, so these run against the real source and not a copy.
+
+    Only files free of TaleWorlds types can be listed here, transitively: a file that is clean
+    itself but names a type that is not stays out of reach. That rules out most of this mod,
+    including the flow table, whose predicates take a session built from engine types.
+  -->
+  <ItemGroup>
+    <Compile Include="**\*.cs" Exclude="bin\**;obj\**" />
+    <Compile Include="..\Services\CSRandom.cs" Link="Source\CSRandom.cs" />
+    <Compile Include="..\Services\SiblingOffsets.cs" Link="Source\SiblingOffsets.cs" />
+    <Compile Include="..\Services\GearDraw.cs" Link="Source\GearDraw.cs" />
+    <Compile Include="..\Services\AgeCurve.cs" Link="Source\AgeCurve.cs" />
+    <Compile Include="..\CharacterCreation\Editor\EditorScope.cs" Link="Source\EditorScope.cs" />
+    <Compile Include="..\Models\StartType.cs" Link="Source\StartType.cs" />
+    <Compile Include="..\Models\SetupMode.cs" Link="Source\SetupMode.cs" />
+    <Compile Include="..\Models\LifePathEffects.cs" Link="Source\LifePathEffects.cs" />
+    <Compile Include="..\Services\LifeProfile.cs" Link="Source\LifeProfile.cs" />
+    <Compile Include="..\Services\Application\Scenarios\SeaDegrees.cs" Link="Source\SeaDegrees.cs" />
+    <Compile Include="..\Models\StartingAge.cs" Link="Source\StartingAge.cs" />
+    <Compile Include="..\Models\ChoiceConsequence.cs" Link="Source\ChoiceConsequence.cs" />
+    <Compile Include="..\CharacterCreation\Scenes\ISceneAnswers.cs" Link="Source\ISceneAnswers.cs" />
+    <Compile Include="..\CharacterCreation\Scenes\SceneOption.cs" Link="Source\SceneOption.cs" />
+    <Compile Include="..\CharacterCreation\Scenes\Scene.cs" Link="Source\Scene.cs" />
+    <Compile Include="..\CharacterCreation\Scenes\SceneAnswers.cs" Link="Source\SceneAnswers.cs" />
+    <Compile Include="..\CharacterCreation\Scenes\SceneRun.cs" Link="Source\SceneRun.cs" />
+    <Compile Include="..\CharacterCreation\Catalog\SceneCatalog.cs" Link="Source\SceneCatalog.cs" />
+    <Compile Include="..\CharacterCreation\Scenes\SceneReading.cs" Link="Source\SceneReading.cs" />
+    <Compile Include="..\Services\LifeProfileScenes.cs" Link="Source\LifeProfileScenes.cs" />
+    <Compile Include="..\Services\Application\SceneOutcome.cs" Link="Source\SceneOutcome.cs" />
+    <Compile Include="..\Services\Portrait.cs" Link="Source\Portrait.cs" />
+    <Compile Include="..\Services\PortraitReading.cs" Link="Source\PortraitReading.cs" />
+    <Compile Include="..\Services\PortraitReach.cs" Link="Source\PortraitReach.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.11.1" />
+    <PackageReference Include="xunit" Version="2.9.2" />
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.8.2" />
+    <PackageReference Include="FluentAssertions" Version="6.12.1" />
+  </ItemGroup>
+
+</Project>

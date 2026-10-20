@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  The single palette declaration site for this mod.
+  Every color the mod draws is defined here; no prefab carries a literal hex.
+  Names and values: Obsidian Black #000000, Forged Gold #FFDA00,
+  Warm Gold Shadow #C9A800, Soft Champagne #FFF1B3, Steel Gray #A6A6A6,
+  Deep Graphite #1A1A1A, hairline #333333, raised #2E2E2E, raised hover #3D3D3D,
+  disabled text #6E6E6E. Fonts stay the game's own.
+-->
+<Brushes>
+
+  <!-- Surfaces -->
+
+  <Brush Name="CSR.Scrim">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#000000B8" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Panel">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#1A1A1AFF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Well">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#2E2E2EFF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Hairline">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#333333FF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Accent">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#FFDA00FF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <!-- Controls -->
+
+  <Brush Name="CSR.Button.Primary" TransitionDuration="0.16">
+    <Layers>
+      <BrushLayer Name="Rest" Sprite="BlankWhiteSquare_9" Color="#FFDA00FF" />
+      <BrushLayer Name="Hover" Sprite="BlankWhiteSquare_9" Color="#C9A800FF" IsHidden="true" />
+      <BrushLayer Name="Off" Sprite="BlankWhiteSquare_9" Color="#2E2E2EFF" IsHidden="true" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Rest" IsHidden="false" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+        <BrushLayer Name="Off" IsHidden="true" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+        <BrushLayer Name="Off" IsHidden="true" />
+      </Style>
+      <Style Name="Pressed">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" ColorFactor="0.8" />
+        <BrushLayer Name="Off" IsHidden="true" />
+      </Style>
+      <Style Name="Selected">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+        <BrushLayer Name="Off" IsHidden="true" />
+      </Style>
+      <Style Name="Disabled">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+        <BrushLayer Name="Off" IsHidden="false" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <!-- Destructive actions: Alert Amber #FFB000 with black text, section 5's Danger button -->
+  <Brush Name="CSR.Button.Danger" TransitionDuration="0.16">
+    <Layers>
+      <BrushLayer Name="Rest" Sprite="BlankWhiteSquare_9" Color="#FFB000FF" />
+      <BrushLayer Name="Hover" Sprite="BlankWhiteSquare_9" Color="#CC8D00FF" IsHidden="true" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Rest" IsHidden="false" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Pressed">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" ColorFactor="0.8" />
+      </Style>
+      <Style Name="Selected">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Disabled">
+        <BrushLayer Name="Rest" IsHidden="false" AlphaFactor="0.5" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Button.Secondary" TransitionDuration="0.16">
+    <Layers>
+      <BrushLayer Name="Rest" Sprite="BlankWhiteSquare_9" Color="#2E2E2EFF" />
+      <BrushLayer Name="Hover" Sprite="BlankWhiteSquare_9" Color="#3D3D3DFF" IsHidden="true" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Rest" IsHidden="false" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Pressed">
+        <BrushLayer Name="Rest" IsHidden="false" ColorFactor="0.8" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+      <Style Name="Selected">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Disabled">
+        <BrushLayer Name="Rest" IsHidden="false" AlphaFactor="0.6" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Row" TransitionDuration="0.16">
+    <Layers>
+      <BrushLayer Name="Rest" Sprite="BlankWhiteSquare_9" Color="#1A1A1AFF" />
+      <BrushLayer Name="Hover" Sprite="BlankWhiteSquare_9" Color="#3D3D3DFF" IsHidden="true" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Rest" IsHidden="false" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Pressed">
+        <BrushLayer Name="Rest" IsHidden="false" ColorFactor="0.8" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+      <Style Name="Selected">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Disabled">
+        <BrushLayer Name="Rest" IsHidden="false" AlphaFactor="0.6" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Pip" TransitionDuration="0.16">
+    <Layers>
+      <BrushLayer Name="Rest" Sprite="BlankWhiteSquare_9" Color="#333333FF" />
+      <BrushLayer Name="Hover" Sprite="BlankWhiteSquare_9" Color="#C9A800FF" IsHidden="true" />
+      <BrushLayer Name="On" Sprite="BlankWhiteSquare_9" Color="#FFDA00FF" IsHidden="true" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Rest" IsHidden="false" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+        <BrushLayer Name="On" IsHidden="true" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+        <BrushLayer Name="On" IsHidden="true" />
+      </Style>
+      <Style Name="Pressed">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" ColorFactor="0.8" />
+        <BrushLayer Name="On" IsHidden="true" />
+      </Style>
+      <Style Name="Selected">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+        <BrushLayer Name="On" IsHidden="false" />
+      </Style>
+      <Style Name="Disabled">
+        <BrushLayer Name="Rest" IsHidden="false" AlphaFactor="0.5" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+        <BrushLayer Name="On" IsHidden="true" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Field">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#2E2E2EFF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Pip.Empty">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#6E6E6EFF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Icon.Increase">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="General\CharacterCreation\increasing_icon" Color="#FFDA00FF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Scrollbar.Track">
+    <Layers>
+      <BrushLayer Name="Fill" Sprite="BlankWhiteSquare_9" Color="#1A1A1AFF" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Fill" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Scrollbar.Handle" TransitionDuration="0.16">
+    <Layers>
+      <BrushLayer Name="Rest" Sprite="BlankWhiteSquare_9" Color="#333333FF" />
+      <BrushLayer Name="Hover" Sprite="BlankWhiteSquare_9" Color="#3D3D3DFF" IsHidden="true" />
+    </Layers>
+    <Styles>
+      <Style Name="Default">
+        <BrushLayer Name="Rest" IsHidden="false" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+      <Style Name="Hovered">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Pressed">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Selected">
+        <BrushLayer Name="Rest" IsHidden="true" />
+        <BrushLayer Name="Hover" IsHidden="false" />
+      </Style>
+      <Style Name="Disabled">
+        <BrushLayer Name="Rest" IsHidden="false" AlphaFactor="0.5" />
+        <BrushLayer Name="Hover" IsHidden="true" />
+      </Style>
+    </Styles>
+  </Brush>
+
+  <!-- Type. Sizes match the vanilla brushes these replace so no layout shifts. -->
+
+  <Brush Name="CSR.Text.Title" Font="Galahad" TextHorizontalAlignment="Center">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#FFDA00FF" FontSize="30" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Text.Heading" Font="Galahad" TextHorizontalAlignment="Left">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#FFDA00FF" FontSize="22" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Text.Body" Font="Galahad" TextHorizontalAlignment="Left">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#FFF1B3FF" FontSize="20" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+      <Style Name="Disabled" FontColor="#6E6E6EFF" FontSize="20" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Text.Secondary" Font="Galahad" TextHorizontalAlignment="Left">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#A6A6A6FF" FontSize="18" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Text.Button" Font="Galahad" TextHorizontalAlignment="Center">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#FFF1B3FF" FontSize="20" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+      <Style Name="Disabled" FontColor="#6E6E6EFF" FontSize="20" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Text.ButtonPrimary" Font="Galahad" TextHorizontalAlignment="Center">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#000000FF" FontSize="20" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+      <Style Name="Disabled" FontColor="#6E6E6EFF" FontSize="20" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Text.ButtonDanger" Font="Galahad" TextHorizontalAlignment="Center">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#000000FF" FontSize="20" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Row.Text" Font="FiraSansExtraCondensed-Regular" TextHorizontalAlignment="Left">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#FFF1B3FF" FontSize="25" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+      <Style Name="Disabled" FontColor="#6E6E6EFF" FontSize="25" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+  <Brush Name="CSR.Field.Text" Font="FiraSansExtraCondensed-Regular" TextHorizontalAlignment="Left" TextVerticalAlignment="Center">
+    <Layers>
+    </Layers>
+    <Styles>
+      <Style Name="Default" FontColor="#FFF1B3FF" FontSize="28" TextOutlineAmount="0" TextGlowRadius="0" TextBlur="0" />
+    </Styles>
+  </Brush>
+
+</Brushes>
